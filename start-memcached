@@ -1,0 +1,7 @@
+#!/bin/sh
+
+set -e
+
+/usr/bin/memcached -d -u root -m 2048
+
+exec "$@"

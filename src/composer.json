@@ -1,0 +1,19 @@
+{
+    "name": "vpumuk/sg",
+    "description": "The SG tests.",
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "firebase/php-jwt": "^5.2",
+        "bramus/router": "~1.6.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    }
+}

@@ -1,0 +1,12 @@
+Сделать image для заливки:
+docker build . --build-arg LOCAL=0 -t docker-run-slotegrator
+
+Сделать image для разработки:
+docker build . --build-arg LOCAL=1 --build-arg PORT=8080 --build-arg DB_USERNAME=developer --build-arg DB_HOST=127.0.0.1 --build-arg DB_PASSWORD=a1z5c6d8 --build-arg CLOUDSQL_INSTANCE=new-life-156307:europe-west1:legacy-cameramate -t docker-run-slotegrator.dev
+
+docker tag docker-run-slotegrator europe-west1-docker.pkg.dev/new-life-156307/docker-run-slotegrator/docker-run-slotegrator
+docker push europe-west1-docker.pkg.dev/new-life-156307/docker-run-slotegrator/docker-run-slotegrator
+
+
+legacy-cameramate
+LAkx4obcfhbwjgil
