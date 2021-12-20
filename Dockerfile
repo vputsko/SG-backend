@@ -78,7 +78,6 @@ RUN chmod +x /usr/local/bin/start-memcached
 # Copy in custom code from the host machine.
 WORKDIR /var/www/html
 COPY ./src /var/www/html
-COPY ./.secrets/New-life-e84ef312c8a6.json /var/www/.secrets/New-life-e84ef312c8a6.json
 
 # Use the PORT environment variable in Apache configuration files.
 # https://cloud.google.com/run/docs/reference/container-contract#port
@@ -100,13 +99,9 @@ RUN apt-get clean \
 
 RUN a2enmod rewrite
 
-#XDebug
-RUN pecl install xdebug \
-    && docker-php-ext-enable xdebug
-
-#RUN if [ "$LOCAL" = "1" ] ; \
-#    then echo "Argument is ${LOCAL}"; \
-#    else docker-php-ext-install -j "$(nproc)" opcache; \
-#   fi
+RUN if [ "$LOCAL" = "1" ] ; \
+    then pecl install xdebug && docker-php-ext-enable xdebug; \
+    else docker-php-ext-install -j "$(nproc)" opcache; \
+   fi
 
 ENTRYPOINT ["start-memcached", "cloud-run-entrypoint.sh", "apache2-foreground"]
