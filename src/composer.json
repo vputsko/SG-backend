@@ -4,6 +4,9 @@
     "license": "MIT",
     "type": "project",
     "require": {
+        "php": ">=7.4",
+        "php-di/php-di": "^6.0",
+        "nikic/fast-route": "~0.5.0",
         "firebase/php-jwt": "^5.2",
         "bramus/router": "~1.6.1"
     },

@@ -104,4 +104,8 @@ RUN if [ "$LOCAL" = "1" ] ; \
     else docker-php-ext-install -j "$(nproc)" opcache; \
    fi
 
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/web
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
 ENTRYPOINT ["start-memcached", "cloud-run-entrypoint.sh", "apache2-foreground"]
