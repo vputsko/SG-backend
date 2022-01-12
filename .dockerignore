@@ -17,4 +17,4 @@ src/vendor/
 docker-compose.yml
 .idea/
 .env*
-composer.phar
+src/composer.phar

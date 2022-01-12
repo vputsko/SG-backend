@@ -1,14 +1,11 @@
 <?php
+
+declare(strict_types = 1);
+
 /**
  * The bootstrap file creates and returns the container.
  */
 
-use DI\ContainerBuilder;
-
 require __DIR__ . '/../vendor/autoload.php';
 
-$containerBuilder = new ContainerBuilder;
-$containerBuilder->addDefinitions(__DIR__ . '/../config/di.php');
-$container = $containerBuilder->build();
-
-return $container;
+return (new DI\ContainerBuilder())->addDefinitions(__DIR__ . '/../config/di.php')->build();

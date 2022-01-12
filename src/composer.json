@@ -5,18 +5,59 @@
     "type": "project",
     "require": {
         "php": ">=7.4",
-        "php-di/php-di": "^6.0",
-        "nikic/fast-route": "~0.5.0",
+        "bernard/bernard": "^0.13.0",
+        "doctrine/dbal": "^3.1.1",
+        "doctrine/orm": "^2.10.2",
         "firebase/php-jwt": "^5.2",
-        "bramus/router": "~1.6.1"
+        "laminas/laminas-diactoros": "^2.8",
+        "laminas/laminas-hydrator": "^4.3",
+        "middlewares/emitter": "^1.0",
+        "middlewares/error-handler": "^3.0",
+        "middlewares/fast-route": "^2.0",
+        "middlewares/http-authentication": "^2.1",
+        "middlewares/request-handler": "^2.0",
+        "mnapoli/silly": "^1.7",
+        "nikic/fast-route": "^1.0",
+        "nyholm/psr7": "^1.4",
+        "php-di/php-di": "^6.0",
+        "symfony/cache": "^5.3",
+        "symfony/http-foundation": "^5.4",
+        "symfony/property-access": "^5.4",
+        "symfony/psr-http-message-bridge": "^2.1",
+        "symfony/serializer": "^5.4",
+        "symfony/yaml": "^5.4",
+        "tuupola/slim-jwt-auth": "^3.5",
+        "symfony/event-dispatcher": "^5.4"
+    },
+    "require-dev": {
+        "doctrine/coding-standard": "^9.0",
+        "phpunit/phpunit": "^7.5 || ^8.5 || ^9.4",
+        "squizlabs/php_codesniffer": "3.6.2",
+        "phpstan/phpstan": "1.2.0"
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/"
+        },
+        "psr-0": {"": "app/"}
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": [
+            "vendor/bin/phpunit"
+        ]
     },
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "icanhazstring/composer-unused": true
+        }
     }
 }
