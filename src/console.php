@@ -8,11 +8,15 @@ $app = new Silly\Application();
 
 $app->useContainer($container, true, true);
 
-$app->command('info [name]', 'App\Command\InfoCommand')->defaults(['name' => 'all']);
 $app->command('get_user [user_id]', 'App\Command\GetUserCommand');
-$app->command('create_queues_doctrine_schema', 'App\Command\CreateQueuesDoctrineSchemaCommand');
-$app->command('consume [queue]', 'App\Command\MainConsumeCommand');
+$app->command('consume [receivers] [-l|--limit=] [-f|--failure-limit=] [-m|--memory-limit=] [-t|--time-limit=] [-b|--bus] [--sleep] [--queues] [--no-reset]', 'App\Command\SymfonyConsumeMessagesCommand')->defaults([
+    'receivers' => ['async'],
+    'limit' => 1,
+    'failure-limit' => 0,
+    'memory-limit' => 0,
+    'time-limit' => 1,
+]);
 
-$app->setDefaultCommand('info');
+$app->setDefaultCommand('consume');
 
 $app->run();

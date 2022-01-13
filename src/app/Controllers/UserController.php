@@ -4,20 +4,18 @@ declare(strict_types = 1);
 
 namespace App\Controllers;
 
-use App\Models\User;
+use App\Jobs\SendNewsletterJob;
+use App\Messages\Notification;
 use App\Repositories\UserRepository;
 use App\Support\Traits\RequestFormatter;
 use App\Support\Traits\Serialized;
-use Doctrine\ORM\EntityManagerInterface;
+use Bernard\QueueFactory;
 use Middlewares\Utils\HttpErrorException;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Bernard\QueueFactory\PersistentFactory;
-use Bernard\QueueFactory;
-use Bernard\Envelope;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use App\Support\EnvelopeEvent;
-use App\Jobs\SendNewsletterJob;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class UserController
 {
@@ -32,15 +30,17 @@ class UserController
 
     protected SendNewsletterJob $job;
 
+    protected MessageBusInterface $bus;
+
+    protected ContainerInterface $receiverLocator;
+
     /**
      * @param  UserRepository  $userRepository
      */
-    public function __construct(UserRepository $userRepository, QueueFactory $queues, EventDispatcher $dispatcher, SendNewsletterJob $job)
+    public function __construct(UserRepository $userRepository, MessageBusInterface $bus)
     {
         $this->userRepository = $userRepository;
-        $this->queues = $queues;
-        $this->dispatcher = $dispatcher;
-        $this->job = $job;
+        $this->bus = $bus;
     }
 
     /**
@@ -75,17 +75,7 @@ class UserController
 
         $user = $this->userRepository->getUser($id);
 
-        $this->job->dispatch([
-            'user_id' => $user->getId(),
-        ]);
-
-        /*$message = new SendNewsletterJob('SendNewsletter', [
-            'user_id' => $user->getId(),
-        ]);
-        $queue = $this->queues->create('send-newsletter');
-        $queue->enqueue($envelope = new Envelope($message));
-
-        $this->dispatcher->dispatch(new EnvelopeEvent($envelope, $queue), 'bernard.produce');*/
+        $this->bus->dispatch(new Notification('Look! I created a message!'));
 
         return response($this->toJson($user));
     }

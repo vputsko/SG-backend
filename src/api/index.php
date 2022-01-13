@@ -9,6 +9,7 @@ use Middlewares\ErrorFormatter;
 use Middlewares\ErrorHandler;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\HttpErrorException;
+use Symfony\Component\Messenger\RoutableMessageBus;
 
 $container = require __DIR__ . "/../bootstrap/app.php";
 

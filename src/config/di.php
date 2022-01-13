@@ -1,27 +1,37 @@
 <?php
 declare(strict_types = 1);
 
+use App\Controllers\Handles\NotificationHandler;
+use App\Messages\Notification;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Bernard\Driver;
-use Bernard\QueueFactory;
-use Bernard\Router;
-use Bernard\Router\SimpleRouter;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Setup;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Messenger\Bridge\Doctrine\Transport\Connection;
+use Symfony\Component\Messenger\Bridge\Doctrine\Transport\DoctrineTransport;
+use Symfony\Component\Messenger\Handler\HandlersLocator;
+use Symfony\Component\Messenger\Handler\HandlersLocatorInterface;
+use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
+use Symfony\Component\Messenger\Middleware\SendMessageMiddleware;
+use Symfony\Component\Messenger\RoutableMessageBus;
+use Symfony\Component\Messenger\Transport\Sender\SendersLocator;
+use Symfony\Component\Messenger\Transport\Sender\SendersLocatorInterface;
+use Symfony\Component\Messenger\Transport\Serialization\Serializer;
+
+use function DI\env;
 use function DI\factory;
 use function DI\get;
-use function DI\env;
-use Bernard\Driver\DoctrineDriver;
-use Bernard\Driver\FlatFileDriver;
-use Bernard\Serializer\SimpleSerializer as Serializer;
-use App\Services\NewsletterMessageHandler;
-use Bernard\QueueFactory\PersistentFactory;
-use App\Jobs\SendNewsletterJob;
+use function DI\create;
 
 return [
 
+    //Doctrine
     EntityManagerInterface::class => factory([EntityManager::class, 'create'])
         ->parameter('connection', get('db.params'))
         ->parameter('config', get('doctrine.config')),
@@ -37,16 +47,30 @@ return [
 
     'doctrine.config' => Setup::createXMLMetadataConfiguration(array(__DIR__."/xml"), (1 == env('LOCAL')), null, null),
 
-    'Driver' => fn (EntityManagerInterface $em) => new DoctrineDriver($em->getConnection()),
+    Connection::class => fn (EntityManagerInterface $em) => new Connection([], $em->getConnection()),
 
-    Router::class => fn (SendNewsletterJob $job) => new SimpleRouter(array('SendNewsletter' => $job)),
+    //Transport
+    'async' => create(DoctrineTransport::class)->constructor(get(Connection::class), new Serializer()),
 
-    QueueFactory::class => fn (EntityManagerInterface $em) => new PersistentFactory(new FlatFileDriver('/var/tmp'), new Serializer()),
+    //Senders
+    SendersLocatorInterface::class => create(SendersLocator::class)->constructor([
+        "*" => ['async'],
+    ], get(ContainerInterface::class)),
 
-    //Response::class =>
+    SendMessageMiddleware::class => create()->constructor(get(SendersLocatorInterface::class), get(EventDispatcherInterface::class)),
 
-    // Bind an interface to an implementation
-    //ArticleRepository::class => create(InMemoryArticleRepository::class),
+    //Handlers
+    HandlersLocatorInterface::class => create(HandlersLocator::class)->constructor([ Notification::class => [new NotificationHandler()] ]),
+
+    HandleMessageMiddleware::class => create()->constructor(get(HandlersLocatorInterface::class)),
+
+    //Bus
+    MessageBusInterface::class => fn (SendMessageMiddleware $sendMessageMiddleware, HandleMessageMiddleware $handleMessageMiddleware) => new MessageBus([$sendMessageMiddleware, $handleMessageMiddleware]),
+
+    RoutableMessageBus::class => create()->constructor(get(ContainerInterface::class), get(MessageBusInterface::class)),
+
+    //Misc
+    EventDispatcherInterface::class => fn () => new EventDispatcher(),
 
     //Repositories
     UserRepository::class => fn (EntityManagerInterface $em) => $em->getRepository(User::class),
