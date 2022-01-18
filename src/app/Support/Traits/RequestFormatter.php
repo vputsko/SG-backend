@@ -11,6 +11,7 @@ use Symfony\Bridge\PsrHttpMessage\Factory\HttpFoundationFactory;
 
 trait RequestFormatter
 {
+
     /** @var SymfonyRequest */
     protected SymfonyRequest $request;
 
@@ -18,4 +19,5 @@ trait RequestFormatter
     {
         $this->request = (new HttpFoundationFactory())->createRequest($serverRequest);
     }
+
 }
