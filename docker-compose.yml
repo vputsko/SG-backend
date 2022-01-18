@@ -20,12 +20,68 @@ services:
       DB_USERNAME: "${DB_USERNAME}"
       DB_PASSWORD: "${DB_PASSWORD}"
       DB_DRIVER: "${DB_DRIVER}"
+      MAILGUN_TOKEN: "${MAILGUN_TOKEN}"
+      MAILGUN_EMAIL: "${MAILGUN_EMAIL}"
       CLOUDSQL_INSTANCE: "${CLOUDSQL_INSTANCE}"
       PHP_IDE_CONFIG: "${PHP_IDE_CONFIG}"
       JWT_SECRET: "${JWT_SECRET}"
+      LOGGLY_TOKEN: "${LOGGLY_TOKEN}"
+      BUGSNAG_TOKEN: "${BUGSNAG_TOKEN}"
     extra_hosts:
       - 'host.docker.internal:host-gateway'
     volumes:
       - ./src/:/var/www/html/
       - ./.secrets:/var/www/.secrets
     restart: on-failure
+    networks:
+      - slotegrator-network
+
+  #MySQL Service
+  db:
+    image: vputsko/cameramate.com-mysql_db
+    container_name: db-slotegrator
+    restart: unless-stopped
+    tty: true
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    environment:
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - cameramate_cameramatemysql:/var/lib/mysql
+      #- ./my.cnf:/etc/mysql/my.cnf:ro
+    networks:
+      - slotegrator-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
+      retries: 3
+      timeout: 5s
+
+  #PHPMYADMIN
+  phpmyadmin:
+    image: vputsko/cameramate.com-phpmyadmin
+    container_name: phpmyadmin-slotegrator
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db
+    depends_on:
+      - db
+    ports:
+      - "8081:80"
+    networks:
+      - slotegrator-network
+
+#Volumes
+volumes:
+  cameramate_cameramatemysql:
+    external: true
+
+#Docker Networks
+networks:
+  slotegrator-network:
+    driver: bridge
