@@ -37,6 +37,10 @@ trait CreatesDatabase
 
         if ($classes) {
             $tool->createSchema($classes);
+            printf("%s - Schema created.\n", static::class);
+        } else {
+            throw new RuntimeException('Metadata are absent.');
         }
     }
+
 }

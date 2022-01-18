@@ -8,6 +8,7 @@ use RuntimeException;
 
 trait RefreshesDatabase
 {
+
     /**
      * Delete all schemas from the database
      *
@@ -23,5 +24,7 @@ trait RefreshesDatabase
 
         $tool = new SchemaTool($this->em);
         $tool->dropSchema($metaData);
+        printf("%s - Database refreshed.\n", static::class);
     }
+
 }

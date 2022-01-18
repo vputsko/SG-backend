@@ -10,11 +10,6 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesDatabase;
 
-    /**
-     * The Doctrine EntityManager
-     *
-     * @var EntityManager
-     */
     protected $em;
 
     /**
@@ -91,4 +86,14 @@ abstract class TestCase extends BaseTestCase
 
         return $traits;
     }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        // doing this is recommended to avoid memory leaks
+        $this->em->close();
+        $this->em = null;
+    }
+
 }

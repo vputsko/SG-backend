@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" backupStaticAttributes="false" bootstrap="vendor/autoload.php" colors="true" convertErrorsToExceptions="true" convertNoticesToExceptions="true" convertWarningsToExceptions="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+>
   <coverage processUncoveredFiles="true">
     <include>
       <directory suffix=".php">./app</directory>
@@ -18,7 +29,7 @@
     <env name="DB_HOST" value="127.0.0.1"/>
     <env name="DB_DATABASE" value="slotegrator"/>
     <env name="DB_USERNAME" value="developer"/>
-    <env name="DB_PASSWORD" value="a1z5c6d8"/>
+    <env name="DB_PASSWORD" value="password"/>
     <env name="LOCAL" value="1"/>
     <env name="DB_DRIVER" value="pdo_sqlite"/>
   </php>
