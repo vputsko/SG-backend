@@ -5,11 +5,11 @@ declare(strict_types = 1);
 namespace App\Repositories\Doctrine;
 
 use App\Models\User;
-use App\Repositories\UserRepository;
+use App\Repositories\UserRepositoryInterface;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\EntityRepository;
 
-class DoctrineUserRepository extends EntityRepository implements UserRepository
+class UserDoctrineRepository extends EntityRepository implements UserRepositoryInterface
 {
 
     /**
@@ -26,7 +26,7 @@ class DoctrineUserRepository extends EntityRepository implements UserRepository
      * Get user by id from the repository.
      *
      * @param mixed $id
-     * @return \App\Models\User|object The user
+     * @return User|object The user
      * @throws EntityNotFoundException
      */
     public function getUser($id): User
@@ -52,6 +52,9 @@ class DoctrineUserRepository extends EntityRepository implements UserRepository
      */
     public function getUsersBy(array $criteria): User
     {
+
+        /** @todo Add criteria validation */
+        
         $user = $this->findOneBy($criteria);
 
         if (! $user) {

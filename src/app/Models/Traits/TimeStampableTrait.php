@@ -11,8 +11,8 @@ use Exception;
 trait TimeStampableTrait
 {
 
-    private DateTimeInterface $createdAt;
-    private DateTimeInterface $updatedAt;
+    protected DateTimeInterface $createdAt;
+    protected DateTimeInterface $updatedAt;
 
     /**
      * @return DateTimeInterface|null
