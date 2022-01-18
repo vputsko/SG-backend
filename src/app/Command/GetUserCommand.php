@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Command;
 
-use App\Repositories\UserRepository;
+use App\Repositories\UserRepositoryInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -13,24 +13,26 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 class GetUserCommand
 {
 
-    /** @var QuestionHelper  */
     private QuestionHelper $helper;
-    /** @var UserRepository  */
-    private UserRepository $userRepository;
+    private UserRepositoryInterface $userRepository;
 
-    public function __construct(QuestionHelper $helper, UserRepository $userRepository)
+    public function __construct(QuestionHelper $helper, UserRepositoryInterface $userRepository)
     {
         $this->helper = $helper;
         $this->userRepository = $userRepository;
     }
 
-    public function __invoke(InputInterface $input, OutputInterface $output)
+    public function __invoke(InputInterface $input, OutputInterface $output): void
     {
         $user_id = $input->getArgument('user_id');
-        if (!$user_id) {
+        
+        if (! $user_id) {
+            
             $question = new Question('Please enter \'user_id\': ', false);
-            $question->setValidator(function ($answer) {
-                if (!$answer || !is_string($answer)) {
+            $question->setValidator(static function ($answer) {
+                
+                if (! $answer || ! is_string($answer)) {
+                    
                     throw new \RuntimeException(
                         'The user_id is empty!'
                     );
@@ -44,5 +46,6 @@ class GetUserCommand
         $user = $this->userRepository->getUser($user_id);
         $output->writeln(sprintf('UserName: <info>%s</info>', $user->getName()));
     }
+    
 }
 

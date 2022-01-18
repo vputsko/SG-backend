@@ -17,7 +17,7 @@ class SymfonyConsumeMessagesCommand extends ConsumeMessagesCommand
         $input->setOption('limit', (int) $input->getOption('limit'));
         $input->setOption('failure-limit', (int) $input->getOption('failure-limit'));
         $input->setOption('time-limit', (int) $input->getOption('time-limit'));
-
+        
         $this->execute($input, $output);
     }
 

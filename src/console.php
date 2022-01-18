@@ -16,6 +16,9 @@ $app->command('consume [receivers] [-l|--limit=] [-f|--failure-limit=] [-m|--mem
     'memory-limit' => 0,
     'time-limit' => 1,
 ]);
+$app->command('send_money [limit]', 'App\Command\SendMoneyCommand')->defaults([
+    'limit' => 0
+]);
 
 $app->setDefaultCommand('consume');
 
