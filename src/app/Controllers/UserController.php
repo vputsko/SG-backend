@@ -4,43 +4,44 @@ declare(strict_types = 1);
 
 namespace App\Controllers;
 
-use App\Jobs\SendNewsletterJob;
 use App\Messages\Notification;
-use App\Repositories\UserRepository;
-use App\Support\Traits\RequestFormatter;
-use App\Support\Traits\Serialized;
-use Bernard\QueueFactory;
+use App\Repositories\UserRepositoryInterface;
 use Middlewares\Utils\HttpErrorException;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class UserController
+class UserController extends Controller
 {
-    use Serialized, RequestFormatter;
 
-    /** @var UserRepository  */
-    protected UserRepository $userRepository;
-
-    protected QueueFactory $queues;
+    protected UserRepositoryInterface $userRepository;
 
     protected EventDispatcher $dispatcher;
-
-    protected SendNewsletterJob $job;
 
     protected MessageBusInterface $bus;
 
     protected ContainerInterface $receiverLocator;
 
+    protected ?MailerInterface $mailer;
+
+    protected ?LoggerInterface $logger;
+
     /**
-     * @param  UserRepository  $userRepository
+     * @param  UserRepositoryInterface  $userRepository
+     * @param  MessageBusInterface  $bus
+     * @param  LoggerInterface  $logger
+     * @param  MailerInterface  $mailer
      */
-    public function __construct(UserRepository $userRepository, MessageBusInterface $bus)
+    public function __construct(UserRepositoryInterface $userRepository, MessageBusInterface $bus, ?LoggerInterface $logger = null, ?MailerInterface $mailer = null)
     {
         $this->userRepository = $userRepository;
         $this->bus = $bus;
+        $this->mailer = $mailer;
+        $this->logger = $logger;
     }
 
     /**
@@ -50,10 +51,9 @@ class UserController
      */
     public function showUsers(): ResponseInterface
     {
-
         $users = $this->userRepository->getUsers();
 
-        return response($this->toJson($users));
+        return $this->createResponse(['data' => $users]);
     }
 
     /**
@@ -65,9 +65,9 @@ class UserController
      */
     public function showUser(ServerRequestInterface $serverRequest): ResponseInterface
     {
-        $this->getRequest($serverRequest);
+        $this->setRequest($serverRequest);
 
-        $id = $this->request->get('id');
+        $id = $this->getRequest()->get('id');
 
         if (! $id) {
             throw HttpErrorException::create(400);
@@ -75,9 +75,22 @@ class UserController
 
         $user = $this->userRepository->getUser($id);
 
-        $this->bus->dispatch(new Notification('Look! I created a message!'));
+        /*$email = (new Email())
+            ->from(getenv('MAILGUN_EMAIL'))
+            ->to($user->getEmail())
+            //->cc('cc@example.com')
+            //->bcc('bcc@example.com')
+            //->replyTo('fabien@example.com')
+            //->priority(Email::PRIORITY_HIGH)
+            ->subject('Time for Symfony Mailer!')
+            ->text('Sending emails is fun again!')
+            ->html('<p>See Twig integration for better HTML integration!</p>');
 
-        return response($this->toJson($user));
+        $this->mailer->send($email);*/
+
+        $this->bus->dispatch(new Notification(['id' => $user->getId()]));
+
+        return $this->createResponse($user);
     }
 
 }

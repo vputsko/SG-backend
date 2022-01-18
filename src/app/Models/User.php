@@ -1,11 +1,12 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace App\Models;
 
 class User
 {
+
     use Traits\TimeStampableTrait;
     
     private int $id;
@@ -55,7 +56,7 @@ class User
     }
 
     /**
-     * Set user Name
+     * Set user email
      *
      * @param  string  $email
      * @return void
@@ -85,5 +86,6 @@ class User
     {
         $this->password = $password;
     }
+
 }
 

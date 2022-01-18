@@ -4,15 +4,15 @@ declare(strict_types = 1);
 
 namespace App\Controllers;
 
-use App\Repositories\UserRepository;
+use App\Repositories\UserRepositoryInterface;
 use App\Support\JsonResponse;
 
 class HomeController
 {
 
-    protected UserRepository $userRepository;
+    protected UserRepositoryInterface $userRepository;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepositoryInterface $userRepository)
     {
         $this->userRepository = $userRepository;
     }

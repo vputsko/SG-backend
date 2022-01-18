@@ -11,21 +11,19 @@ use Symfony\Component\Serializer\Serializer;
 
 trait Serialized
 {
+
     /**
      * @param array|object $data
      * @return string
      */
-    public function toJson($data) : string
+    protected function toJson($data): string
     {
-        if (\is_array($data)) {
-            $data = [ 'data' => $data];
-        }
-
-        $encoders = [new XmlEncoder(), new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
+        $encoders = [new XmlEncoder, new JsonEncoder];
+        $normalizers = [new ObjectNormalizer];
 
         $serializer = new Serializer($normalizers, $encoders);
 
         return $serializer->serialize($data, 'json');
     }
+
 }

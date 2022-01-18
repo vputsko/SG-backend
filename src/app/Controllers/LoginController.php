@@ -5,26 +5,18 @@ declare(strict_types = 1);
 namespace App\Controllers;
 
 use App\Models\User;
-use App\Repositories\UserRepository;
-use App\Support\Traits\RequestFormatter;
-use App\Support\Traits\Serialized;
-use Laminas\Diactoros\ServerRequest;
+use App\Repositories\UserRepositoryInterface;
 use Middlewares\Utils\HttpErrorException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use PsrJwt\Factory;
+use PsrJwt\Factory\Jwt;
 
-class LoginController
+class LoginController extends Controller
 {
-    use Serialized, RequestFormatter;
 
-    /** @var UserRepository  */
-    protected UserRepository $userRepository;
+    protected UserRepositoryInterface $userRepository;
 
-    /**
-     * @param  UserRepository  $userRepository
-     */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepositoryInterface $userRepository)
     {
         $this->userRepository = $userRepository;
     }
@@ -32,53 +24,48 @@ class LoginController
     /**
      * Handle a login request to the application.
      *
-     * @param  ServerRequestInterface  $serverRequest
-     * @return ResponseInterface
      * @throws HttpErrorException
      * @throws \ReallySimpleJWT\Exception\ValidateException
      */
-    public function login(ServerRequestInterface $serverRequest): ResponseInterface
+    public function __invoke(ServerRequestInterface $serverRequest): ResponseInterface
     {
 
-        $this->getRequest($serverRequest);
+        $this->setRequest($serverRequest);
 
         $user = $this->userRepository->getUsersBy($this->credentials());
 
         $this->authenticated($user);
 
-        return response($this->toJson([
+        return $this->createResponse([
             "message" => "Successful login.",
             "token" => $this->generateToken($user),
-        ]));
+        ]);
     }
 
     /**
      * Get the needed authorization credentials from the request.
-     *
-     * @return array
      */
-    protected function credentials(): array
+    public function credentials(): array
     {
         return array(
-            'email' => $this->request->get('email')
+            'email' => $this->getRequest()->get('email')
             );
     }
 
     /**
      * Validate the user login request.
      *
-     * @return void
      * @throws HttpErrorException
      */
-    protected function validateLogin()
+    public function validateLogin(): void
     {
-        $email = $this->request->get('email');
+        $email = $this->getRequest()->get('email');
 
         if (! $email) {
             throw HttpErrorException::create(400, ['problem' => 'email required']);
         }
 
-        $password = $this->request->get('password');
+        $password = $this->getRequest()->get('password');
 
         if (! $password) {
             throw HttpErrorException::create(400, ['problem' => 'password required']);
@@ -88,13 +75,11 @@ class LoginController
     /**
      * The user has been authenticated.
      *
-     * @param  User  $user
-     * @return void
      * @throws HttpErrorException
      */
-    protected function authenticated($user): void
+    public function authenticated(User $user): void
     {
-        if (!password_verify($this->request->get('password'),$user->getPassword())) {
+        if (!password_verify($this->getRequest()->get('password'),$user->getPassword())) {
             throw HttpErrorException::create(401, ['problem' => 'wrong password']);
         }
     }
@@ -102,13 +87,11 @@ class LoginController
     /**
      * Generate JWT token
      *
-     * @param User $user
-     * @return string
      * @throws \ReallySimpleJWT\Exception\ValidateException
      */
-    protected function generateToken(User $user): string
+    public function generateToken(User $user): string
     {
-        $factory = new \PsrJwt\Factory\Jwt();
+        $factory = new Jwt;
 
         $builder = $factory->builder();
 
