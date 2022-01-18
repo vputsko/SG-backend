@@ -4,17 +4,19 @@ declare(strict_types = 1);
 
 namespace App\Messages;
 
+use App\Models\User;
+
 class Notification
 {
     
-    private string $content;
+    private array $content;
 
-    public function __construct(string $content)
+    public function __construct(array $content)
     {
         $this->content = $content;
     }
 
-    public function getContent(): string
+    public function getContent(): array
     {
         return $this->content;
     }
