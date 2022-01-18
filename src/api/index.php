@@ -9,19 +9,16 @@ use Middlewares\ErrorFormatter;
 use Middlewares\ErrorHandler;
 use Middlewares\Utils\Dispatcher;
 use Middlewares\Utils\HttpErrorException;
-use Symfony\Component\Messenger\RoutableMessageBus;
 
 $container = require __DIR__ . "/../bootstrap/app.php";
-
 require_once __DIR__ . "/../app/helpers.php";
 
 $dispatcher = FastRoute\simpleDispatcher(static function (RouteCollector $r): void {
-    $r->addRoute(['GET', 'POST'], '/login', [LoginController::class, 'login']);
+    $r->addRoute(['GET', 'POST'], '/login', LoginController::class);
 
     $r->addRoute(['POST', 'GET'], '/users', [UserController::class, 'showUsers']);
     // {id} must be a number (\d+)
     $r->addRoute('GET', '/user/{id:\d+}', [UserController::class, 'showUser']);
-    //$r->addRoute('GET', '/article/{id}', ['SuperBlog\Controller\ArticleController', 'show']);
 });
 
 $dispatcher = new Dispatcher([
@@ -33,7 +30,7 @@ $dispatcher = new Dispatcher([
 
     new Tuupola\Middleware\JwtAuthentication([
         "secret" => getenv('JWT_SECRET'),
-        "ignore" => ["/login", "/user"],
+        "ignore" => ["/login"],
         "error" => function ($response, $arguments) {
             throw HttpErrorException::create(401);
         }
