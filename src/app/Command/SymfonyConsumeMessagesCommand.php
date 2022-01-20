@@ -11,14 +11,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SymfonyConsumeMessagesCommand extends ConsumeMessagesCommand
 {
 
-    public function __invoke(InputInterface $input, OutputInterface $output): void
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
 
         $input->setOption('limit', (int) $input->getOption('limit'));
         $input->setOption('failure-limit', (int) $input->getOption('failure-limit'));
         $input->setOption('time-limit', (int) $input->getOption('time-limit'));
         
-        $this->execute($input, $output);
+        return parent::execute($input, $output);
     }
 
 }
