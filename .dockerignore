@@ -17,4 +17,5 @@ src/vendor/
 docker-compose.yml
 .idea/
 .env*
+.phpstorm.meta.php
 src/composer.phar

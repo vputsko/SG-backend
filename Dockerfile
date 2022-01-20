@@ -75,6 +75,15 @@ RUN pecl install memcached && docker-php-ext-enable memcached
 COPY start-memcached /usr/local/bin/start-memcached
 RUN chmod +x /usr/local/bin/start-memcached
 
+RUN if [ "$LOCAL" = "1" ] ; \
+    then pecl install xdebug && docker-php-ext-enable xdebug; \
+    else docker-php-ext-install -j "$(nproc)" opcache \
+      && pecl install apcu \
+      && pecl install apcu_bc-1.0.3 \
+      && docker-php-ext-enable apcu --ini-name 10-docker-php-ext-apcu.ini \
+      && docker-php-ext-enable apc --ini-name 20-docker-php-ext-apc.ini; \
+   fi
+
 # Copy in custom code from the host machine.
 WORKDIR /var/www/html
 COPY ./src /var/www/html
@@ -91,18 +100,16 @@ RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /usr/loca
 COPY ./cloud-run-entrypoint.sh /usr/local/bin/
 
 RUN cd /var/www/html && \
-    composer install --no-plugins --no-scripts
+    if [ "$LOCAL" = "1" ] ; \
+    then composer install --no-plugins --no-scripts; \
+    else composer install --no-dev --optimize-autoloader --no-plugins --no-scripts; \
+    fi
 
 # Clean repository
 RUN apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
 RUN a2enmod rewrite
-
-RUN if [ "$LOCAL" = "1" ] ; \
-    then pecl install xdebug && docker-php-ext-enable xdebug; \
-    else docker-php-ext-install -j "$(nproc)" opcache; \
-   fi
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/api
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
