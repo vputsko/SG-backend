@@ -34,9 +34,9 @@ class Controller
     /**
      * @param array|object $data
      */
-    protected function createResponse($data): ResponseInterface
+    protected function createResponse($data, $attributes = []): ResponseInterface
     {
-        return response($this->toJson($data));
+        return response($this->toJson($data, $attributes));
     }
 
 }

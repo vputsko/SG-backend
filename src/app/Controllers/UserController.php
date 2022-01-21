@@ -33,8 +33,8 @@ class UserController extends Controller
     /**
      * @param  UserRepositoryInterface  $userRepository
      * @param  MessageBusInterface  $bus
-     * @param  LoggerInterface  $logger
-     * @param  MailerInterface  $mailer
+     * @param  LoggerInterface|null  $logger
+     * @param  MailerInterface|null  $mailer
      */
     public function __construct(UserRepositoryInterface $userRepository, MessageBusInterface $bus, ?LoggerInterface $logger = null, ?MailerInterface $mailer = null)
     {
@@ -53,7 +53,7 @@ class UserController extends Controller
     {
         $users = $this->userRepository->getUsers();
 
-        return $this->createResponse(['data' => $users]);
+        return $this->createResponse(['data' => $users], ['id', 'name', 'email']);
     }
 
     /**
