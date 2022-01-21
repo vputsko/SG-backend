@@ -62,8 +62,7 @@
         "optimize-autoloader": true,
         "allow-plugins": {
             "composer/package-versions-deprecated": true,
-            "dealerdirect/phpcodesniffer-composer-installer": true,
-            "icanhazstring/composer-unused": true
+            "dealerdirect/phpcodesniffer-composer-installer": true
         }
     }
 }
