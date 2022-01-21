@@ -99,12 +99,6 @@ RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /usr/loca
 # custom entrypoint
 COPY ./cloud-run-entrypoint.sh /usr/local/bin/
 
-RUN cd /var/www/html && \
-    if [ "$LOCAL" = "1" ] ; \
-    then composer install --no-plugins --no-scripts; \
-    else composer install --no-dev --optimize-autoloader --no-plugins --no-scripts; \
-    fi
-
 # Clean repository
 RUN apt-get clean \
   && rm -rf /var/lib/apt/lists/*
@@ -114,5 +108,11 @@ RUN a2enmod rewrite
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/api
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+RUN cd /var/www/html && \
+    if [ "$LOCAL" = "1" ] ; \
+    then composer install --no-plugins; \
+    else composer install --no-dev --optimize-autoloader --no-plugins; \
+    fi
 
 ENTRYPOINT ["start-memcached", "cloud-run-entrypoint.sh", "apache2-foreground"]
