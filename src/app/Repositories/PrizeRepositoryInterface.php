@@ -31,5 +31,12 @@ interface PrizeRepositoryInterface
      */
     public function getPrizeBy(array $criteria): Prize;
 
+    /**
+     * Get random prize from the repository.
+     * 
+     * @return array
+     */
+    public function getRandomPrize(): array;
+
 }
 

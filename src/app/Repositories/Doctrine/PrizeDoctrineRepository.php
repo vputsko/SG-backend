@@ -6,6 +6,7 @@ namespace App\Repositories\Doctrine;
 
 use App\Models\Prize;
 use App\Repositories\PrizeRepositoryInterface;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\EntityRepository;
 
@@ -31,16 +32,16 @@ class PrizeDoctrineRepository extends EntityRepository implements PrizeRepositor
      */
     public function getPrize($id): Prize
     {
-        $prise = $this->find($id);
+        $prize = $this->find($id);
 
-        if (! $prise) {
+        if (! $prize) {
             throw EntityNotFoundException::fromClassNameAndIdentifier(
                 $this->getEntityName(),
                 ['id' => $id],
             );
         }
 
-        return $prise;
+        return $prize;
     }
 
     /**
@@ -51,13 +52,40 @@ class PrizeDoctrineRepository extends EntityRepository implements PrizeRepositor
      */
     public function getPrizeBy(array $criteria): Prize
     {
-        $prise = $this->findOneBy($criteria);
+        $prize = $this->findOneBy($criteria);
 
-        if (! $prise) {
+        if (! $prize) {
             throw EntityNotFoundException::fromClassNameAndIdentifier($this->getEntityName(), $criteria);
         }
 
-        return $prise;
+        return $prize;
+    }
+
+    /**
+     * Get random prize with random amount from the repository.
+     *
+     * @return array
+     * @throws EntityNotFoundException
+     */
+    public function getRandomPrize(): array
+    {
+        $criteria = Criteria::create()->where(Criteria::expr()->gt('maxAmount', 0));
+        $prizes = $this->matching($criteria)->toArray();
+
+        if (! count($prizes)) {
+            throw EntityNotFoundException::noIdentifierFound($this->getEntityName());
+        }
+
+        shuffle($prizes);
+
+        /** @var Prize $rndPrize */
+        $rndPrize = array_shift($prizes);
+
+        return [
+            'id' => $rndPrize->getId(),
+            'title' => $rndPrize->getTitle(),
+            'amount' => rand(1, $rndPrize->getMaxAmount()),
+        ];
     }
 
 }

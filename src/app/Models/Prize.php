@@ -11,6 +11,7 @@ class Prize
 
     private int $id;
     private string $title;
+    private int $maxAmount;
 
     /**
      * Get user Id
@@ -41,6 +42,27 @@ class Prize
     public function setTitle(string $title): void
     {
         $this->title = $title;
+    }
+
+    /**
+     * Get prize max amount
+     *
+     * @return int
+     */
+    public function getMaxAmount(): int
+    {
+        return $this->maxAmount;
+    }
+
+    /**
+     * Set prize max amount
+     *
+     * @param  int $maxAmount
+     * @return void
+     */
+    public function setMaxAmount(int $maxAmount): void
+    {
+        $this->maxAmount = $maxAmount;
     }
     
 }
