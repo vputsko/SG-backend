@@ -8,6 +8,9 @@
         {
             "name": "Returns details about a particular user",
             "id": "2f278f05-cec5-4994-aa8e-ccedb6d1a934",
+            "protocolProfileBehavior": {
+                "disableBodyPruning": true
+            },
             "request": {
                 "auth": {
                     "type": "bearer",
@@ -32,11 +35,11 @@
                     ],
                     "variable": [
                         {
-                            "id": "2e91c7fa-8b51-4e65-b159-c1839ac5cfd2",
                             "key": "id",
                             "value": "-3014136",
-                            "type": "any",
-                            "description": "(Required) ID of the user"
+                            "description": "(Required) ID of the user",
+                            "id": "2e91c7fa-8b51-4e65-b159-c1839ac5cfd2",
+                            "type": "any"
                         }
                     ]
                 }
@@ -87,13 +90,13 @@
     ],
     "variable": [
         {
-            "id": "a37283c9-d5e7-4ea3-a2a7-006f9658c191",
+            "id": "c4a7cee5-6d81-42fc-be84-976d7e7f1046",
             "key": "baseUrl",
             "value": "sg.putsko.com.ua",
             "type": "string"
         },
         {
-            "id": "7efdb191-5c49-4628-9ad6-10a7ac199826",
+            "id": "84c96bda-5e0c-41f5-a922-31c962550dfa",
             "key": "id",
             "value": "1",
             "type": "string"
