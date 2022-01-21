@@ -1,0 +1,102 @@
+{
+    "info": {
+        "_postman_id": "fafa92d5-60b3-4e6b-be0f-688b3ff7f4a4",
+        "name": "SG Demo",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Returns details about a particular user",
+            "id": "2f278f05-cec5-4994-aa8e-ccedb6d1a934",
+            "request": {
+                "auth": {
+                    "type": "bearer",
+                    "bearer": [
+                        {
+                            "key": "token",
+                            "value": "<Bearer Token>",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{baseUrl}}/user/:id",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "user",
+                        ":id"
+                    ],
+                    "variable": [
+                        {
+                            "id": "2e91c7fa-8b51-4e65-b159-c1839ac5cfd2",
+                            "key": "id",
+                            "value": "-3014136",
+                            "type": "any",
+                            "description": "(Required) ID of the user"
+                        }
+                    ]
+                }
+            },
+            "response": [],
+            "variable": [
+                {
+                    "id": "2e91c7fa-8b51-4e65-b159-c1839ac5cfd2",
+                    "key": "id",
+                    "value": "-3014136",
+                    "type": "any",
+                    "description": "(Required) ID of the user"
+                }
+            ]
+        }
+    ],
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "<Bearer Token>",
+                "type": "string"
+            }
+        ]
+    },
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "id": "47d48ebb-cbc6-49ca-8d7c-91ac5e18be91",
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "id": "56d3b234-57a0-4bab-afe7-005d64b2e8b6",
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "id": "a37283c9-d5e7-4ea3-a2a7-006f9658c191",
+            "key": "baseUrl",
+            "value": "sg.putsko.com.ua",
+            "type": "string"
+        },
+        {
+            "id": "7efdb191-5c49-4628-9ad6-10a7ac199826",
+            "key": "id",
+            "value": "1",
+            "type": "string"
+        }
+    ]
+}
