@@ -7,6 +7,7 @@ docker build . --build-arg LOCAL=1 --build-arg PORT=8080 --build-arg DB_USERNAME
 docker tag docker-run-slotegrator europe-west1-docker.pkg.dev/new-life-156307/docker-run-slotegrator/docker-run-slotegrator
 docker push europe-west1-docker.pkg.dev/new-life-156307/docker-run-slotegrator/docker-run-slotegrator
 
+vendor/bin/doctrine orm:schema-tool:update --force
 
 legacy-cameramate
 LAkx4obcfhbwjgil
