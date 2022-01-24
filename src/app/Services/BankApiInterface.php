@@ -6,8 +6,7 @@ interface BankApiInterface
 {
     /**
      * @param  array  $request
-     * @return array
      */
-    public function sendMoney(array $request): array;
+    public function sendMoney(array $request);
 
 }

@@ -4,29 +4,33 @@ declare(strict_types = 1);
 
 namespace App\Command;
 
-use App\Services\BankApiInterface;
+use App\Messages\SendMoneyMessage;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class SendMoneyCommand extends Command
 {
 
     private QuestionHelper $helper;
-    private BankApiInterface $bankApi;
 
-    public function __construct(QuestionHelper $helper, BankApiInterface $bankApi)
+    public function __construct(QuestionHelper $helper, MessageBusInterface $bus)
     {
         $this->helper = $helper;
-        $this->bankApi = $bankApi;
+        $this->bus = $bus;
 
         parent::__construct();
     }
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+        $limit = (int) $input->getArgument('limit');
+        for ($i = 0; $i < $limit; $i++) {
+            $this->bus->dispatch(new SendMoneyMessage(0));
+        }
         return 0;
     }
 
@@ -37,7 +41,7 @@ class SendMoneyCommand extends Command
     {
         $this
             ->setDefinition([
-                new InputArgument('limit', InputArgument::REQUIRED, 'Specify the number of processed payment.'),
+                new InputArgument('limit', InputArgument::OPTIONAL, 'Specify the number of processed payment.', 1),
                 ])
             ->setDescription('Process payments')
             ->setHelp(<<<'EOF'
