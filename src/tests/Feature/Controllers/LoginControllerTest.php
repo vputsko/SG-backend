@@ -75,6 +75,7 @@ class LoginControllerTest extends TestCase
         $loginController = new LoginController($this->userRepository);
 
         $this->expectException(HttpErrorException::class);
+        $this->expectExceptionCode(401);
         $response = $loginController($serverRequest);
     }
     

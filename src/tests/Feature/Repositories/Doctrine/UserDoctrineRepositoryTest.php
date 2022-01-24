@@ -40,17 +40,13 @@ class UserDoctrineRepositoryTest extends TestCase
 
         self::assertIsNumeric($userTest->getId());
         self::assertSame($user->getId(), $userTest->getId());
-        //self::assertTrue($this->em->contains($user));
-        //$user = $this->em->find('App\Models\User', 1);
     }
 
 
     public function testNotFoundGetUser(): void
     {
         $this->createDatabaseSchema();
-
-        $this->expectException(EntityNotFoundException::class);
-
+        
         $user = new User;
         $user->setName('The first');
         $user->setEmail('first@exapmle.com');
@@ -58,7 +54,8 @@ class UserDoctrineRepositoryTest extends TestCase
         $this->em->persist($user);
         $this->em->flush();
 
-        $userTest = $this->userRepository->getUser(2);
+        $this->expectException(EntityNotFoundException::class);
+        $this->userRepository->getUser(2);
     }
 
     public function testGetUsers(): void
@@ -98,7 +95,7 @@ class UserDoctrineRepositoryTest extends TestCase
         $this->em->flush();
 
         $criteria = [ 'email' => 'second@exapmle.com'];
-        $userTest = $this->userRepository->getUsersBy($criteria);
+        $this->userRepository->getUsersBy($criteria);
     }
 
 }
