@@ -15,7 +15,7 @@ class UserDoctrineRepository extends EntityRepository implements UserRepositoryI
     /**
      * Finds all users in the repository.
      *
-     * @return array<object> The users.
+     * @return object[] The users.
      */
     public function getUsers(): array
     {

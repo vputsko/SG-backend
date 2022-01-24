@@ -18,12 +18,11 @@ class PrizeController extends Controller
         $this->prizeRepository = $prizeRepository;
     }
     
-    public function showRandomPrize(ServerRequestInterface $serverRequest): ResponseInterface
+    public function showRandomPrize(): ResponseInterface
     {
-        $this->setRequest($serverRequest);
-        
         $prize = $this->prizeRepository->getRandomPrize();
 
         return $this->createResponse($prize);
     }
+    
 }
