@@ -26,11 +26,12 @@
   </testsuites>
   <php>
     <env name="APP_ENV" value="testing"/>
-    <env name="DB_HOST" value="127.0.0.1"/>
-    <env name="DB_DATABASE" value="slotegrator"/>
-    <env name="DB_USERNAME" value="developer"/>
-    <env name="DB_PASSWORD" value="password"/>
-    <env name="LOCAL" value="1"/>
-    <env name="DB_DRIVER" value="pdo_sqlite"/>
+    <env name="DB_HOST" value="db" force="true"/>
+    <env name="DB_DATABASE" value="slotegrator" force="true"/>
+    <env name="DB_USERNAME" value="laravel" force="true"/>
+    <env name="DB_PASSWORD" value="a1z5c6d8" force="true"/>
+    <env name="LOCAL" value="1" force="true"/>
+    <env name="DB_DRIVER" value="pdo_sqlite" force="true"/>
+    <env name="LOCAL" value="1" force="true"/>
   </php>
 </phpunit>
