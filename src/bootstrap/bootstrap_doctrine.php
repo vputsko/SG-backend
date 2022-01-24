@@ -4,7 +4,7 @@ declare(strict_types=1);
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
-require_once __DIR__ . "/../vendor/autoload.php";
+require "app.php";
 
 $isDevMode = getenv('LOCAL') == 1;
 $proxyDir = null;

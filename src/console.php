@@ -2,7 +2,11 @@
 
 declare(strict_types = 1);
 
-$container = require __DIR__ . "/bootstrap/app.php";
+require __DIR__ . '/bootstrap/app.php';
+
+use App\Kernel\Application;
+
+$container = Application::buildContainer();
 
 $app = new Silly\Application();
 
@@ -16,7 +20,7 @@ $app->command('consume [receivers] [-l|--limit=] [-f|--failure-limit=] [-m|--mem
     'time-limit' => 1,
 ]);
 $app->command('send_money [limit]', ['App\Command\SendMoneyCommand', 'execute'])->defaults([
-    'limit' => 0,
+    'limit' => 1,
 ]);
 
 $app->setDefaultCommand('consume');

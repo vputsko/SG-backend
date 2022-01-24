@@ -4,8 +4,9 @@ declare(strict_types = 1);
 
 namespace App;
 
+use App\Kernel\Application;
 use Laminas\Diactoros\Response\TextResponse;
-use DI\Container;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use function function_exists;
 
@@ -13,11 +14,11 @@ if (! function_exists('container')) {
     /**
      * Return the container
      * 
-     * @return Container
+     * @return ContainerInterface
      */
-    function container(): Container
+    function container(): ContainerInterface
     {
-        return require __DIR__ . "/../bootstrap/app.php";
+        return Application::buildContainer();
     }
 }
 

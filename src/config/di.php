@@ -1,21 +1,30 @@
 <?php
+
 declare(strict_types = 1);
 
 use App\Command\SendMoneyCommand;
 use App\Command\SymfonyConsumeMessagesCommand;
-use App\Controllers\Handles\NotificationHandler;
+use App\Controllers\Handles\SendMoneyHandler;
 use App\Controllers\LoginController;
 use App\Controllers\UserController;
-use App\Messages\Notification;
+use App\Messages\SendMoneyMessage;
 use App\Models\Prize;
 use App\Models\User;
+use App\Repositories\Doctrine\PaymentsDoctrineRepository;
+use App\Repositories\PaymentsRepositoryInterface;
 use App\Repositories\PrizeRepositoryInterface;
 use App\Repositories\UserRepositoryInterface;
-use App\Services\BankApiInterface;
+use App\Services\BankApiFactory;
 use App\Services\MonetaBankApi;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Setup;
+use FastRoute\DataGenerator\GroupCountBased;
+use FastRoute\RouteCollector;
+use FastRoute\RouteParser\Std;
+use Middlewares\Emitter;
+use Middlewares\ErrorFormatter\JsonFormatter;
+use Middlewares\ErrorHandler;
 use Monolog\Handler\LogglyHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 use Psr\Container\ContainerInterface;
@@ -65,6 +74,11 @@ return [
     'doctrine.config' => Setup::createXMLMetadataConfiguration(array(__DIR__."/xml"), false, '/var/tmp/proxy', null),
     Connection::class => fn (EntityManagerInterface $em) => new Connection([], $em->getConnection()),
 
+    //Routers
+    Std::class => autowire(),
+    GroupCountBased::class => autowire(),
+    RouteCollector::class => autowire()->constructor(get(Std::class), get(GroupCountBased::class)),
+    
     //Transport
     'async' => create(DoctrineTransport::class)->constructor(get(Connection::class), get(SerializerInterface::class)),
 
@@ -75,16 +89,19 @@ return [
     SendMessageMiddleware::class => create()->constructor(get(SendersLocatorInterface::class), get(EventDispatcherInterface::class))->method('setLogger', get(LoggerInterface::class)),
 
     //Handlers
-    NotificationHandler::class => create()->constructor(get(UserRepositoryInterface::class), get(MailerInterface::class)),
+    SendMoneyHandler::class => create()->constructor(get(PaymentsRepositoryInterface::class), get(BankApiFactory::class)),
     HandlersLocatorInterface::class => create(HandlersLocator::class)
         ->constructor([
-            Notification::class => [
-                get(NotificationHandler::class)
-            ]
+            SendMoneyMessage::class => [
+                get(SendMoneyHandler::class)
+            ],
         ]),
     HandleMessageMiddleware::class => create()
         ->constructor(get(HandlersLocatorInterface::class))
         ->method('setLogger', get(LoggerInterface::class)),
+    Emitter::class => autowire(),
+    JsonFormatter::class => autowire(),
+    ErrorHandler::class => autowire()->constructor([get(JsonFormatter::class)]),
 
     //Buses
     MessageBusInterface::class => create(MessageBus::class)->constructor([
@@ -121,9 +138,13 @@ return [
     //Repositories
     UserRepositoryInterface::class => fn (EntityManagerInterface $em) => $em->getRepository(User::class),
     PrizeRepositoryInterface::class => fn (EntityManagerInterface $em) => $em->getRepository(Prize::class),
+    PaymentsRepositoryInterface::class => create(PaymentsDoctrineRepository::class),
     
     //Services
-    BankApiInterface::class => create(MonetaBankApi::class),
+    BankApiFactory::class => autowire()->constructor([
+        MonetaBankApi::class => get(MonetaBankApi::class)
+    ]),
+    MonetaBankApi::class => autowire(),
 
     //Controllers
     UserController::class => autowire(),

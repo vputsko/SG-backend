@@ -1,5 +1,14 @@
 <?php
-$entityManager = require_once "./bootstrap/bootstrap_doctrine.php";
+
+declare(strict_types = 1);
+
+require __DIR__ . '/bootstrap/app.php';
+
+use App\Kernel\Application;
+use Doctrine\ORM\EntityManagerInterface;
+
+$container = Application::buildContainer();
+$entityManager = $container->get(EntityManagerInterface::class);
 
 $newUserName = $argv[1];
 $newUserEmail = $argv[2];
