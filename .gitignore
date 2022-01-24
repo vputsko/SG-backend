@@ -21,7 +21,6 @@ dist/
 
 # Maven
 target/
-dist/
 
 # JetBrains IDE
 .idea/
@@ -49,5 +48,9 @@ Thumbs.db
 *.wmv
 
 .secrets
-composer.phar
+*composer.phar
 .env
+.phpcs-cache
+phpcs.xml
+src/vendor
+help
