@@ -54,3 +54,4 @@ Thumbs.db
 phpcs.xml
 src/vendor
 help
+secrets

@@ -8,8 +8,8 @@ use App\Controllers\UserController;
 
 return [
     ['POST', '/login[/]', LoginController::class],
-    ['GET', '/users[/]', [UserController::class, 'showUsers']], //(for demo purposes only)
-    ['GET', '/user/{id:\d+}', [UserController::class, 'showUser']], //(for demo purposes only)
+    ['GET', '/users', [UserController::class, 'showUsers']], //(for demo purposes only)
+    ['GET', '/users/{id:\d+}', [UserController::class, 'showUser']], //(for demo purposes only)
     ['GET', '/iam[/]', [UserController::class, 'showCurrentUser']],
     ['GET', '/rnd_prize[/]', [PrizeController::class, 'showRandomPrize'] ],
 ];
